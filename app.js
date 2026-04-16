@@ -156,48 +156,6 @@ async function k() {
     })
 
 
-    app.post('/faltas/:id', async (req, res) => {
-        let k = jwt.verify(req.cookies.sessao, process.env.chave)
-        if (k.permissao === 2) {
-            try {
-                if (!materias.includes(req.body.materia)) {
-                    return res.status(400).send('matéria inexistente.')
-                }
-                await conn.query('INSERT INTO faltas (id_aluno, materia, dia) VALUES (?,?,?)', [req.params.id, req.body.materia, req.body.dia])
-                return res.send('nota inserida com sucesso!')
-                // vai retornar erro se o aluno nao existir pq id_aluno é chave estrangeira que remete a coluna id da table alunos
-            } catch(err) {
-                return res.status(400).send('erro ao inserir nota; má formatação de dados.')
-            }
-             
-        } else {
-            return res.status(403).send('Não autorizado.')
-        }
-    })
-
-    app.post('/notas/:id', async (req, res) => {
-        let k = jwt.verify(req.cookies.sessao, process.env.chave)
-        if (k.permissao === 2) {
-            try {
-                if (!materias.includes(req.body.materia) || req.body.nota < 0 || req.body.nota > 10) {
-                    return res.status(400).send('erro ao inserir nota; má formatação de dados.')
-                }
-                await conn.query('INSERT INTO notas (id_aluno, valor, materia, tipo, bimestre) VALUES (?,?,?,?,?)', [req.params.id, req.body.nota, req.body.materia, req.body.tipo, req.body.bimestre])
-                // tipo é se a nota é mensal ou bimestral.
-                // valor é só a nota mesmo (quanto tirou)
-                // bimestre é qual bimestre.
-                return res.send('nota inserida com sucesso!')
-                // vai retornar erro se o aluno nao existir pq id_aluno é chave estrangeira que remete a coluna id da table alunos
-            } catch(err) {
-                return res.status(400).send('erro ao inserir nota; má formatação')
-            }
-             
-        } else {
-            return res.status(403).send('Não autorizado.')
-        }
-    })
-
-
 
     app.listen(8080, () => {
         console.log('servidor rodando em 8080')
