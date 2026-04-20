@@ -49,6 +49,33 @@ async function k() {
     //turma: qtd alunos
     //add nota, botar presença
 
+//aqui vo coloca a resenha que o luiz pediu a nota la espero q funcione pq no meu funcionou mas voce sabe como e eessas coisa de tecnologia ne tipo so funciona quando quer :<
+app.post('/nota', async (req, res) => {
+    try {
+    
+        let token = jwt.verify(req.cookies.sessao, process.env.chave)
+
+    
+        if (token.permissao != 2) {
+            return res.send("nao e profesor")
+        }
+
+        let id = req.body.id
+        let materia = req.body.materia
+        let nota = req.body.nota
+
+        await con.query(
+            "INSERT INTO notas (id, materia, nota) VALUES (?, ?, ?)",
+            [id, materia, nota]
+        )
+
+        res.send("nota salva!!!!")
+    } catch (err) {
+        res.send("deu erro ;<")
+    }
+})
+
+
     app.post('/registro?tipo', async (req, res) => {
         let conn = await con
         let b = await bcrypt.hash(req.body.senha,10)
