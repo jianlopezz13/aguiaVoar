@@ -182,6 +182,24 @@ app.post('/nota', async (req, res) => {
         }
     })
 
+    app.post("/faltas/:id", async (req, res)=>{
+            let k = jwt.verify(req.cookies.sessao, process.env.chave)
+            if(k.permissao === 2){
+                try{
+                    if(!materias.includes(req.body.materia)){
+                        return res.status(400).send('matéria inexistente')
+                    }
+                    await conn.query("INSERT INTO faltas (id_aluno, materia, dia) WHERE  [?,?,?]", [req.body.id, req.body.materia, req.body.dia])
+                    return res.send("Nota inserida com sucesso")
+                }
+                catch(erro){
+                    return res.status(400).send(`Má formatação dos dados. Erro: ${erro}`)
+                }
+            }
+            else{
+                return res.status(403).send("acesso não autorizado")
+            }
+        })
 
 
     app.listen(8080, () => {
